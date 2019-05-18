@@ -32,6 +32,14 @@
 					</div>
 				</section>
 				<section>
+					<h2>Assumptions</h2>
+					<ul>
+						<li>You understand the basics of programming</li>
+						<li>Meaning: control flow, variables, state, etc</li>
+						<li>You are familiar with OO principles</li>
+					</ul>
+				</section>
+				<section>
 					<h2>What we will cover</h2>
 					<ul>
 						<li>Why Elixir</li>
@@ -74,6 +82,50 @@
 						<li>Desktop GUI applications</li>
 						<li>String parsers</li>
 					</ul>
+
+					<div style="font-size: 16px">
+						Note computation heavy tasks: you can call out into natively implemented
+						function in C that can be called from Erlang. This takes one of the cpu
+						schedulers. There are some packages that do linear algebra through NIFs.
+					</div>
+				</section>
+				<section>
+					<section>
+						<h2>What is Elixir?</h2>
+						<ul>
+							<li>Created in 2011</li>
+							<li>Separate language that compiles down to Erlang</li>
+							<li>Runs on the Erlang VM</li>
+							<li>Erlang VM also called the BEAM</li>
+							<li>Compile to Erlang -> Erlang to BEAM files</li>
+							<li>BEAM files also called bytecode (like Java)</li>
+							<li>Functional language</li>
+						</ul>
+					</section>
+					<section>
+						<h2>What is the BEAM?</h2>
+						<ul>
+							<li>The virtual machine that runs erlang bytecode</li>
+							<li>Runs files in the .beam extension</li>
+							<li>Thought of as a micro operative system that handles it's own threads</li>
+							<li>Runs thousands if not millions of processes</li>
+						</ul>
+					</section>
+					<section>
+						<h2>More about BEAM</h2>
+						<ul>
+							<li>When BEAM starts, it also starts a thread named Scheduler that is responsible for running each process concurrently on the CPU</li>
+							<li>BEAM starts a scheduler for each available core</li>
+						</ul>
+					</section>
+					<section>
+						<h2>The BEAM</h2>
+						<img src="images/erlang-scheduler.png" />
+					</section>
+					<section>
+						<h2>Notes about OO vs COP</h2>
+						<img src="images/oop-vs-cop.jpg" />
+					</section>
 				</section>
 				<section>
 					<h2>Let's learn interactively</h2>
@@ -92,26 +144,29 @@ iex> String.length("The quick brown fox jumps over the lazy dog")
 					</code></pre>		
 				</section>
 				<section>
-					<section><h2>The basics - types, modules, operators</section>
+					<section>
+						<h2>The basics</h2>
+						<h2>types, modules, operators, functions</h2>
+					</section>
 					<section>
 						<h2>Types</h2>
 						<ul>
 							<li>Atom - :restarting</li>
 							<li>Float - 3.15</li>
-							<li>Function - fn/1</li>
 							<li>Integer: 3</li>
 							<li>List: ["first", "second"]</li>
 							<li>Map: %{some_key: "some_value"}</li>
 							<li>Process: #PID<0.103.0></li>
 							<li>Port: #Port<0.1444></li>
 							<li>Tuple: {:ok, "cart_restarted"}</li>
+							<li>Function - fn/1</li>
 						</ul>
 					</section>
 					<section>
 						<ul>
-							<li>Special types hiding as atoms..</li>
+							<li>Special types hiding as atoms</li>
 							<li>Booleans</li>
-							<li>Atoms: symbolic constants</li>
+							<li>Atoms: stored in a global table in VM</li>
 							<li>Note: Module names are atoms</li>
 							<pre><code data-trim style="width: 610px;">
 iex> true |> is_atom
@@ -142,15 +197,205 @@ true
 							<li>Elixir and Erlang also call these binaries</li>
 							<li>Binaries are lists of integers for the character code</li>
 							<li>Example of "hello": <<72, 101, 104, 104, 111>></li>
+							<li>Interpolation: "Hello there, #{first_name}"</li>
 						</ul>
 					</section>
 					<section>
 						<h2>Operators</h2>
 						<ul>
+							<li>Standard operators exist: +, -, *, /, ++, etc.
 							<li>Most operators are just functions</li>
-							<li>1 + 5 is the same as Kernel.+(1, 5)</li>
+							<li>add_result = 1 + 5</li>
+							<li>1 + 5 is the same as: add_result = Kernel.+(1, 5)</li>
 							<li>Functions are located in the <a href="https://hexdocs.pm/elixir/Kernel.html">Kernel module</a></li>
 							<li>Note: Elixir automatically includes all Kernel functions</li>
+						</ul>
+					</section>
+					<section>
+						<h2>Functions</h2>
+						<ul>
+							<li>Functions defined with 'def'</li>
+							<li>Parenthesis are optional in function calls</li>
+						</ul>
+						<pre><code>
+def print_something(param) do
+	IO.puts("something")
+	# can also call without paren
+	IO.puts "something"
+end
+						</code></pre>
+					</section>
+				</section>
+				<section>
+					<section>
+						<h2>The basics</h2>
+						<h2>Pattern match, control flow, do/end blocks</h2>
+					</section>
+					<section>
+						<h2>Pattern matching</h2>
+						<ul>
+							<li>The '=' is actually a match operator</li>
+							<li>Tries to match left and right hand sides of the operator</li>
+							<li>Attempts to do variable assignment only on the left hand side of the operator</li>
+						</ul>
+					</section>
+					<section>
+						<h2>Match operator</h2>
+						<h2>variable assignment</h2>
+						<pre><code>
+iex> x = 1
+1
+iex> x
+1
+						</code></pre>
+					</section>
+					<section>
+						<h2>Match operator</h2>
+						<h2>match attempt</h2>
+						<pre><code>
+iex> 1 = x
+1
+iex> 2 = x
+** (MatchError) no match of right hand side value: 1
+						</code></pre>
+					</section>
+					<section>
+						<h2>Complex matching</h2>
+						<pre><code>
+iex(1)> a = %{outter_map: %{inner_map: 1}}
+%{outter_map: %{inner_map: 1}}
+iex(2)> %{outter_map: %{inner_map: match}} = a
+%{outter_map: %{inner_map: 1}}
+iex(3)> match
+1
+						</code></pre>
+					</section>
+					<section>
+						<h2>You can match everywhere!</h2>
+						<h5>You can use 'guards' in functions to match parameters</h5>
+						<pre><code>
+def my_function(number) when is_integer(number) and rem(number, 2) == 0 do
+  # do stuff
+end
+						</code></pre>
+					</section>
+					<section>
+						<h2>Control flow - case</h2>
+						<h5>Compare many patterns until a match is found</h5>
+						<pre><code>
+iex> case {1, 2, 3} do
+...>   {4, 5, 6} ->
+...>     "This clause won't match"
+...>   {1, x, 3} ->
+...>     "This clause will match and bind x to 2 in this clause"
+...>   _ ->
+...>     "This clause would match any value"
+...> end
+"This clause will match and bind x to 2 in this clause"
+						</code></pre>
+					</section>
+					<section>
+						<h2>Control flow - cond</h2>
+						<h5>Useful to match against different values, but only one condition</h5>
+						<pre><code>
+iex> cond do
+...>   2 + 2 == 5 ->
+...>     "This will not be true"
+...>   2 * 2 == 3 ->
+...>     "Nor this"
+...>   1 + 1 == 2 ->
+...>     "But this will"
+...> end
+"But this will"
+						</code></pre>
+					</section>
+					<section>
+						<h2>Control flow - if/unless</h2>
+						<pre><code>
+iex> if true do
+...>   "This works!"
+...> end
+"This works!"
+iex> unless true do
+...>   "This will never be seen"
+...> end
+nil
+						</code></pre>
+					</section>
+					<section>
+						<h2>do/end blocks</h2>
+						<ul>
+							<li>So far, case/cond/if/unless need a "do...end" chunks</li>
+							<li>These chunks are called blocks</li>
+							<li>do/end blocks are tied to the outermost function call</li>
+							<li>Syntactic sugar for keyword lists of parameters for the function</li>
+						</ul>
+						<pre><code>
+iex> if some_condition do
+	IO.puts("Some value")
+end
+iex> if false, do: :this, else: :that
+:that
+						</code></pre>
+					</section>
+				</section>
+				<section>
+					<section>
+						<h2>Building blocks</h2>
+						<ul>
+							<li>Functions</li>
+							<li>Modules</li>
+							<li>Applications</li>
+							<li>Processes</li>
+						</ul>
+					</section>
+					<section>
+						<h2>Functions</h2>
+						<pre><code>
+@doc "Register a connection's header value in the system. Default to empty map for params"
+def register_connection(%Connection{} = conn, params \\ %{}) do
+	# Set the first header from a match
+	[auth_header | rest] = conn.headers
+
+	# match out the key 'token'
+	%{"token" => auth_token} = auth_header
+
+	# Call an internal function
+	Registry.register_connection_header(auth_token)
+
+	# return connection
+	conn
+end
+						</code></pre>
+					</section>
+					<section>
+						<h2>Modules</h2>
+						<pre><code>
+defmodule ElixirCourse.Application do
+	# Pull in some macros to set up more code
+	use Application
+
+	# Pull in functions
+	import Kernel, except: [if: 2, unless: 2]
+
+	require Logger
+
+	alias ElixirCourse.Util
+
+	def start(options) do
+		parsed_options = Util.parse(options)
+		Logger.info("Starting with #{inspect parsed_options}")
+		{:ok, parsed_options}
+	end
+end
+						</code></pre>
+					</section>
+					<section>
+						<h2>Applications</h2>
+						<ul>
+							<li>Also called mix application</li>
+							<li>Applications can be started as a process</li>
+							<li>Applications are 'libraries' in other languages</li>
 						</ul>
 					</section>
 				</section>
@@ -162,13 +407,22 @@ true
 						<h2>The Actor Model</h2>
 						<ul>
 							<li>Concurrency primitive that holds it's own state</li>
-							<li>Actors send messages to other actors</li>
+							<li>Each actor holds it's own state and mailbox</li>
+							<li>Actors send messages to other actors mailboxes</li>
 							<li>Modify their own local state</li>
 							<li>Do not share their own state</li>
 						</ul>
 					</section>
 					<section>
-						<h2>Elixir - everything is a process (actor)</h2>
+						<h2>The Actor Model</h2>
+						<img src="images/concurrency-elixir-actor-model.jpg" />
+					</section>
+					<section>
+						<h2>Message passing</h2>
+						<img src="images/concurrency-actor-model-send-message.jpg" />
+					</section>
+					<section>
+						<h2>Everything is a process</h2>
 						<ul>
 							<li>Find your current iex process ID: run self()</li>
 							<li>Let's send your iex process a message</li>
@@ -177,6 +431,118 @@ true
 							<li>Run: flush()</li>
 						</ul>
 					</section>
+					<section>
+						<h2>Process basics</h2>
+						<pre><code>
+pid = spawn some_function
+# Starts a new process, return the PID
+
+send pid, message
+# Send message to pid
+
+# Try to match messages in process mailbox
+receive do
+	match -> result1
+	match2 -> result2
+after timeout -> result_timeout
+end
+
+self() #Print current pid
+						</code></pre>
+					</section>
+					<section>
+						<h2>Concurrency oriented issues</h2>
+						<ul>
+							<li>How do we pass messages in a common format?</li>
+							<li>Do we really want to rely on putting send/receive blocks everywhere?</li>
+							<li>How do we manage timeouts?</li>
+							<li>How do we manage our message mailbox?</li>
+						</ul>
+					</section>
+				</section>
+				<section>
+					<section>
+						<h2>OTP - a standard framework for concurrency</h2>
+						<h5>OTP provides 3 things for concurrency oriented programming</h5>
+						<ul>
+							<li>The first one is Erlang itself</li>
+							<li>The second is a set of libraries available with the virtual machine</li>
+							<li>The third is a set of system design principles</li>
+						</ul>
+					</section>
+					<section>
+						<h2>OTP Basics</h2>
+						<ul>
+							<li>Instead of using primitive functions send/receive, there's abstractions</li>
+							<li>Supervisor - process that monitors other processes</li>
+							<li>Application - the idiomatic way to package software in Erlang/OTP</li>
+							<li>GenServer - abstraction around the actor model</li>
+							<li>Task - convenience around spawning and awaiting async task</li>
+						</ul>
+					</section>
+					<section>
+						<h2>A note about supervisors</h2>
+						<div>
+							 We can have several of these in our application and when we have more than one Supervisor monitoring processes we call this a Supervision Tree.
+						</div>
+					</section>
+					<section>
+						<h2>OTP - supervisor</h2>
+						<img src="images/otp-supervisor.png" />
+					</section>
+					<section>
+						<h2>OTP - application</h2>
+						<img src="images/otp-application.jpg" />
+					</section>
+					<section>
+						<h2>OTP - GenServer</h2>
+						<pre><code>
+defmodule Stack do
+  use GenServer
+
+  # Callbacks
+
+  @impl true
+  def init(stack) do
+    {:ok, stack}
+  end
+
+  @impl true
+  def handle_call(:pop, _from, [head | tail]) do
+    {:reply, head, tail}
+  end
+
+  @impl true
+  def handle_cast({:push, item}, state) do
+    {:noreply, [item | state]}
+  end
+end
+
+# Start the server
+{:ok, pid} = GenServer.start_link(Stack, [:hello])
+
+# This is the client
+GenServer.call(pid, :pop)
+#=> :hello
+
+GenServer.cast(pid, {:push, :world})
+#=> :ok
+
+GenServer.call(pid, :pop)
+#=> :world
+						</code></pre>
+					</section>
+				</section>
+				<section>
+					<h2>References</h2>
+					<ul>
+						<li>
+							<a href="http://blog.plataformatec.com.br/2018/04/elixir-processes-and-this-thing-called-otp/">Plataformatec - Elixir Processes and OTP
+						</li>
+						<li>
+							<a href="https://www.slideshare.net/steffenbauer/concurrency-robustness-elixir-socrates-2015">Concurrency, robustness, and Elixir</a>
+						</li>
+					</ul>
 				</section>
 			</div>
 		</div>
