@@ -32,6 +32,16 @@
 					</div>
 				</section>
 				<section>
+					<h2>What we will cover</h2>
+					<ul>
+						<li>Why Elixir</li>
+						<li>What Elixir is good at</li>
+						<li>Basics of Elixir</li>
+						<li>Advanced Topics</li>
+						<li>Interactive code demo</li>
+					</ul>
+				</section>
+				<section>
 					<h2>Why elixir?</h2>
 					<ul>
 						<li>Massive parallelism</li>
@@ -48,7 +58,7 @@
 				</section>
 				<section>
 					<h2>
-						Elixir does well
+						What Elixir does well
 					</h2>
 					<ul>
 						<li>Concurrency</li>
@@ -58,7 +68,7 @@
 					</ul>
 				</section>
 				<section>
-					<h2>Not so well</h2>
+					<h2>What Elixir does not do well</h2>
 					<ul>
 						<li>Computation heavy tasks</li>
 						<li>Desktop GUI applications</li>
@@ -66,33 +76,107 @@
 					</ul>
 				</section>
 				<section>
-					<section><h2>The basics - types, operators</section>
+					<h2>Let's learn interactively</h2>
+					<ul>
+						<li>Open a terminal, type in iex.</li>
+						<li>Iex = interactive elixir, a way to run elixir code</li>
+						<li>Documentation is given in iex</li>
+						<li>Type "h Enum.empty?"</li>
+					</ul>
+					<pre><code data-trim style="width: 1000px;">
+Erlang/OTP 21.1 [erts-10.1] [source] [64-bit] [smp:4:4] [ds:4:4:10] [async-threads:10] [hipe] [kernel-poll:false] [dtrace]
+
+Interactive Elixir (1.8) - press Ctrl+C to exit (type h() ENTER for help)
+iex> String.length("The quick brown fox jumps over the lazy dog")
+43
+					</code></pre>		
+				</section>
+				<section>
+					<section><h2>The basics - types, modules, operators</section>
 					<section>
-						<h2>Numbers</h2>
+						<h2>Types</h2>
 						<ul>
-							<li>Integers</li>
-							<li>Binary / octal / hex (0xF11)</li>
-							<li>Floats</li>
+							<li>Atom - :restarting</li>
+							<li>Float - 3.15</li>
+							<li>Function - fn/1</li>
+							<li>Integer: 3</li>
+							<li>List: ["first", "second"]</li>
+							<li>Map: %{some_key: "some_value"}</li>
+							<li>Process: #PID<0.103.0></li>
+							<li>Port: #Port<0.1444></li>
+							<li>Tuple: {:ok, "cart_restarted"}</li>
 						</ul>
 					</section>
 					<section>
 						<ul>
+							<li>Special types hiding as atoms..</li>
 							<li>Booleans</li>
-							<li>Atoms</li>
-							<pre><code data-trim>
+							<li>Atoms: symbolic constants</li>
+							<li>Note: Module names are atoms</li>
+							<pre><code data-trim style="width: 610px;">
 iex> true |> is_atom
 true
 iex> :true |> is_boolean
 true
 iex> :true === true
 true
+iex> Canvaserver.WorkAssignment |> is_atom
+true
 							</code></pre>
 						</ul>
 					</section>
-					<section>Page 1</section>
-					<section>Page 1</section>
-					<section>Page 1</section>
-					<section>Page 1</section>
+					<section>
+						<h2>Data Types</h2>
+						<ul>
+							<li>Elixir also provides other data types built on types above</li>
+							<li>DateTime: a struct holding integers and floats for DD/MM/YYYY and TT:TT:TT</li>
+							<li>Keyword: list of tuples in this form: [{:first, 1}, {:second, 2}]</li>
+							<li>See <a href="https://hexdocs.pm/elixir/Kernel.html#module-data-types">Elixir module data types</a></li>
+						</ul>
+					</section>
+					<section>
+						<h2>Strings</h2>
+						<ul>
+							<li>Strings are UTF-8 encoded wrapped in double quotes</li>
+							<li>Example: "Hello"</li>
+							<li>Elixir and Erlang also call these binaries</li>
+							<li>Binaries are lists of integers for the character code</li>
+							<li>Example of "hello": <<72, 101, 104, 104, 111>></li>
+						</ul>
+					</section>
+					<section>
+						<h2>Operators</h2>
+						<ul>
+							<li>Most operators are just functions</li>
+							<li>1 + 5 is the same as Kernel.+(1, 5)</li>
+							<li>Functions are located in the <a href="https://hexdocs.pm/elixir/Kernel.html">Kernel module</a></li>
+							<li>Note: Elixir automatically includes all Kernel functions</li>
+						</ul>
+					</section>
+				</section>
+				<section>
+					<section>
+						<h2>Concurrency</h2>
+					</section>
+					<section>
+						<h2>The Actor Model</h2>
+						<ul>
+							<li>Concurrency primitive that holds it's own state</li>
+							<li>Actors send messages to other actors</li>
+							<li>Modify their own local state</li>
+							<li>Do not share their own state</li>
+						</ul>
+					</section>
+					<section>
+						<h2>Elixir - everything is a process (actor)</h2>
+						<ul>
+							<li>Find your current iex process ID: run self()</li>
+							<li>Let's send your iex process a message</li>
+							<li>Process.send(self(), :hi)</li>
+							<li>Let's force iex to show messages it's received</li>
+							<li>Run: flush()</li>
+						</ul>
+					</section>
 				</section>
 			</div>
 		</div>
