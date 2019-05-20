@@ -4,7 +4,7 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-		<title>reveal.js</title>
+		<title>Elixir Training Course</title>
 
 		<link rel="stylesheet" href="css/reset.css">
 		<link rel="stylesheet" href="css/reveal.css">
@@ -107,7 +107,7 @@
 						<ul>
 							<li>The virtual machine that runs erlang bytecode</li>
 							<li>Runs files in the .beam extension</li>
-							<li>Thought of as a micro operative system that handles it's own threads</li>
+							<li>Thought of as a micro operative system that handles its own threads</li>
 							<li>Runs thousands if not millions of processes</li>
 						</ul>
 					</section>
@@ -624,6 +624,117 @@ GenServer.call(pid, :pop)
 						</code></pre>
 					</section>
 				</section>
+        <section>
+          <section>
+            <h2>Mix applications</h2>
+            <ul>
+              <li>A mix file is a way to organize elixir projects</li>
+              <li>Mix file = mix.exs file</li>
+              <li>A mix file has appliations to start</li>
+              <li>Defines the dependencies used by the application</li>
+              <li>Specifies additional applications to start</li>
+            </ul>
+          </section>
+          <section>
+            <h2>An example mixfile</h2>
+            <pre><code>
+defmodule KV.MixProject do
+  use Mix.Project
+
+  def project do
+    [
+      app: :kv,
+      version: "0.1.0",
+      elixir: "~> 1.6-dev",
+      start_permanent: Mix.env == :prod,
+      deps: deps()
+    ]
+  end
+
+  # Run "mix help compile.app" to learn about applications
+  def application do
+    [
+      extra_applications: [:logger]
+    ]
+  end
+
+  # Run "mix help deps" to learn about dependencies
+  defp deps do
+    [
+      # {:dep_from_hexpm, "~> 0.3.0"},
+      # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"},
+    ]
+  end
+end
+            </code></pre>
+          </section>
+          <section>
+            <h2>Mix aliases</h2>
+            <div>Define alternate mix task aliases for conveniences in the mix file</div>
+            <pre><code>
+defp aliases do
+  [
+    c: "compile",
+    hello: &hello/1
+  ]
+end
+            </code></pre>
+          </section>
+        </section>
+        <section>
+          <h2>Testing</h2>
+          <ul>
+            <li>Elixir provides ExUnit</li>
+            <li>ExUnit provides test macros to set up tests</li>
+            <li>Provide a `setup` function to run for all tests</li>
+          </ul>
+          <pre><code>
+defmodule KVTest do
+  use ExUnit.Case
+  doctest KV
+  alias KVTest.TestHelpers
+
+  setup do
+    repeated_test_data = TestHelpers.setup_data()
+    {:ok, %{test_data: repeated_test_data}}
+  end
+
+  test "greets the world", %{test_data: test_data} do
+    assert test_data == %{class_name: :elixir}
+  end
+end
+          </code></pre>
+        </section>
+        <section>
+          <section>
+            <h2>Tools</h2>
+            <ul>
+              <li>iex - interactive command line. Run `iex -S mix` to run the mix application interactively</li>
+              <li>Mix - command line tool for mix applications, run tasks, compile, etc</li>
+              <li>Run `mix help` to view mix tasks</li>
+              <li>Hex - site for packages (<a href="https://hex.pm">Hex.pm</a>)</li>
+              <li>Observer - GUI tool for showing the application</li>
+            </ul>
+          </section>
+          <section>
+            <h2>mix</h2>
+            <ul>
+              <li>Run `mix help` to see tasks</li>
+              <li>Run `mix test` to run all tests</li>
+              <li>Run `mix compile` to force compile the code</li>
+              <li>Look in `mix.exs` file for any aliases for tasks</li>
+            </ul>
+          </section>
+        </section>
+        <section>
+          <h2>A last bit about frameworks</h2>
+          <ul>
+            <li>A few frameworks available for Elixir</li>
+            <li>Phoenix - web framework for APIs and websockets</li>
+            <li>Start a phoenix server with `mix.phx server`</li>
+            <li>Nerves - IoT and embedded framework</li>
+          </ul>
+        </section>
 				<section>
 					<h2>References</h2>
 					<ul>
