@@ -141,12 +141,11 @@ Erlang/OTP 21.1 [erts-10.1] [source] [64-bit] [smp:4:4] [ds:4:4:10] [async-threa
 Interactive Elixir (1.8) - press Ctrl+C to exit (type h() ENTER for help)
 iex> String.length("The quick brown fox jumps over the lazy dog")
 43
-					</code></pre>		
+					</code></pre>
 				</section>
 				<section>
 					<section>
-						<h2>The basics</h2>
-						<h2>types, modules, operators, functions</h2>
+						<h2>Types, modules, operators, functions</h2>
 					</section>
 					<section>
 						<h2>Types</h2>
@@ -228,8 +227,7 @@ end
 				</section>
 				<section>
 					<section>
-						<h2>The basics</h2>
-						<h2>Pattern match, control flow, do/end blocks</h2>
+						<h2>Pattern matching, control flow, do/end blocks</h2>
 					</section>
 					<section>
 						<h2>Pattern matching</h2>
@@ -253,6 +251,8 @@ iex> x
 						<h2>Match operator</h2>
 						<h2>match attempt</h2>
 						<pre><code>
+iex> x = 1
+1
 iex> 1 = x
 1
 iex> 2 = x
@@ -346,7 +346,6 @@ iex> if false, do: :this, else: :that
 							<li>Functions</li>
 							<li>Modules</li>
 							<li>Applications</li>
-							<li>Processes</li>
 						</ul>
 					</section>
 					<section>
@@ -368,6 +367,72 @@ def register_connection(%Connection{} = conn, params \\ %{}) do
 end
 						</code></pre>
 					</section>
+          <section>
+            <h2>Modules</h2>
+            <h4>Tools faciliting software reuse</h4>
+            <ul>
+              <li>alias</li>
+              <li>require</li>
+              <li>import</li>
+              <li>use</li>
+            </ul>
+          </section>
+          <section>
+            <h2>alias</h2>
+            <h6>Allows you to set up an alias for a module to use</h6>
+            <pre><code>
+defmodule Stats do
+  alias Math.List, as: List
+  alias MyModule.ModuleNamespace.MyModule
+  alias MyApp.{Foo, Bar, Baz}
+
+  # In the remaining module definition List expands to Math.List.
+  # Also provides MyModule without the namespace.
+end
+            </code></pre>
+          </section>
+          <section>
+            <h2>require</h2>
+            <div>Elixir provides macros as a mechanism for meta-programming (writing code that generates code). Macros are expanded at compile time.</div>
+            <pre><code>
+iex> Integer.is_odd(3)
+** (UndefinedFunctionError) function Integer.is_odd/1 is undefined or private. However there is a macro with the same name and arity. Be sure to require Integer if you intend to invoke this macro
+iex> require Integer
+Integer
+iex> Integer.is_odd(3)
+true
+            </code></pre>
+          </section>
+          <section>
+            <h2>import</h2>
+            <div>
+              We use import whenever we want to easily access functions or macros from other modules without using the fully-qualified name. For instance, if we want to use the duplicate/2 function from the List module several times, we can import it:
+            </div>
+            <pre><code>
+iex> import List, only: [duplicate: 2]
+List
+iex> duplicate :ok, 3
+[:ok, :ok, :ok]
+            </code></pre>
+          </section>
+          <section>
+            <h2>use</h2>
+            <div>
+              The use macro is frequently used as an extension point. This means that, when you use a module FooBar, you allow that module to inject any code in the current module, such as importing itself or other modules, defining new functions, setting a module state, etc.
+            </div>
+            <pre><code>
+defmodule AssertionTest do
+  use ExUnit.Case, async: true
+
+  # This use statement brings in the "test" function
+  # This allows us to use it as-is below:
+
+  test "always pass" do
+    assert true
+  end
+end
+            </code></pre>
+          </section>
 					<section>
 						<h2>Modules</h2>
 						<pre><code>
@@ -408,6 +473,7 @@ end
 						<ul>
 							<li>Concurrency primitive that holds it's own state</li>
 							<li>Each actor holds it's own state and mailbox</li>
+              <li>In Elixir, actor = process</li>
 							<li>Actors send messages to other actors mailboxes</li>
 							<li>Modify their own local state</li>
 							<li>Do not share their own state</li>
@@ -450,8 +516,33 @@ end
 self() #Print current pid
 						</code></pre>
 					</section>
+          <section>
+            <h2>More Process ideas</h2>
+            <ul>
+              <li>Processes can monitor other processes</li>
+              <li>When processes exit, they send messages to monitoring processes</li>
+              <li>Processes can link to other processes, so when the link goes down, they go down</li>
+              <li>You can ask the BEAM if processes are alive</li>
+            </ul>
+          </section>
+          <section>
+            <h2>Processes - examples</h2>
+            <pre><code>
+pid = spawn(fn ->
+  :timer.sleep(5000)
+  raise("IM DYING")
+)
+
+ref = Process.monitor(pid)
+
+receive do
+  {:DOWN, ^ref, :process, ^pid, msg} ->
+    IO.puts("Received DOWN from process: #{inspect pid}")
+end
+            </code></pre>
+          </section>
 					<section>
-						<h2>Concurrency oriented issues</h2>
+						<h2>Issues from Concurrency</h2>
 						<ul>
 							<li>How do we pass messages in a common format?</li>
 							<li>Do we really want to rely on putting send/receive blocks everywhere?</li>
